@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Esports Connect - Community</title>
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700&display=swap" rel="stylesheet" />
+  <style>
+    /* CSS Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background-color: #0e0e0e;
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #1a1a1a, #262626);
+      padding: 20px 0;
+      border-bottom: 2px solid #ff4500;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    header .logo {
+      font-size: 32px;
+      text-align: center;
+      color: #fff;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      color: #ff4500;
+      text-decoration: none;
+      font-size: 18px;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #ffa07a;
+    }
+
+    /* Community Hero Section */
+    .community-hero {
+      background: linear-gradient(135deg, #1f1f1f 0%, #0e0e0e 100%);
+      background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
+      height: 400px;
+      margin-top: 60px;
+      /* offset for header */
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .community-hero h2 {
+      position: relative;
+      font-size: 48px;
+      color: #ff4500;
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Section Titles */
+    .section-title {
+      text-align: center;
+      font-size: 36px;
+      margin: 40px 0 20px;
+      border-bottom: 2px solid #ff4500;
+      display: inline-block;
+      padding-bottom: 10px;
+    }
+
+    /* Guidelines, Events, News, Team-Up remain as before */
+    .guidelines {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 40px;
+    }
+
+    .guidelines h3 {
+      font-size: 24px;
+      color: #ffa07a;
+      margin-bottom: 10px;
+    }
+
+    .guidelines p {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .events {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 40px;
+      justify-content: center;
+    }
+
+    .event-card {
+      background: #1f1f1f;
+      padding: 20px;
+      border-radius: 8px;
+      width: 280px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+      transition: transform 0.3s;
+    }
+
+    .event-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .event-card h4 {
+      font-size: 20px;
+      color: #ff4500;
+      margin-bottom: 10px;
+    }
+
+    .event-card p {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .news {
+      background: #1a1a1a;
+      padding: 20px;
+      padding-top: 14px;
+      border-radius: 8px;
+      margin-bottom: 40px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .news h3 {
+      font-size: 22px;
+      color: #ffa07a;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 5px;
+    }
+
+    .news-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .news-item:last-child {
+      border-bottom: none;
+    }
+
+    .news-item h4 {
+      font-size: 18px;
+      color: #ff4500;
+      margin-bottom: 5px;
+    }
+
+    .news-item p {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .news-item a {
+      font-size: 14px;
+      color: #ff4500;
+      text-decoration: underline;
+    }
+
+    /* New Chat with Server Tabs */
+    .chat-container {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 800px;
+      margin: 0 auto 40px auto;
+    }
+
+    .chat-container h2 {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .chat-tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .chat-tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #262626;
+      margin: 0 5px;
+      border-radius: 4px 4px 0 0;
+      transition: background 0.3s;
+    }
+
+    .chat-tab.active {
+      background: #ff4500;
+      color: #fff;
+    }
+
+    .chat-messages {
+      height: 300px;
+      overflow-y: auto;
+      background: #262626;
+      padding: 15px;
+      border-radius: 0 4px 4px 4px;
+      margin-bottom: 10px;
+    }
+
+    .chat-message {
+      margin-bottom: 10px;
+    }
+
+    .chat-message .username {
+      color: #ff4500;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .chat-message .message {
+      color: #e0e0e0;
+    }
+
+    .chat-input {
+      display: flex;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+      background: #202225;
+      color: #dcddde;
+    }
+
+    .chat-input button {
+      padding: 10px 20px;
+      border: none;
+      background: #ff4500;
+      color: #fff;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .chat-input button:hover {
+      background: #e63900;
+    }
+
+    /* Team Up Section with Request Form */
+    .teamup-section {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .teamup-section h3 {
+      margin-bottom: 10px;
+      color: #ffa07a;
+      font-size: 24px;
+    }
+
+    .teamup-section p {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .teamup-section form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .teamup-section input,
+    .teamup-section textarea {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      background: #202225;
+      color: #dcddde;
+      width: 100%;
+    }
+
+    .teamup-section textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .teamup-section button {
+      padding: 10px 20px;
+      background: #ff4500;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .teamup-section button:hover {
+      background: #e63900;
+    }
+
+    .teamup-requests {
+      margin-top: 20px;
+    }
+
+    .teamup-request {
+      background: #262626;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .teamup-request h4 {
+      color: #ff4500;
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+
+    .teamup-request p {
+      font-size: 14px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #1a1a1a;
+      padding: 20px 0;
+      text-align: center;
+      border-top: 2px solid #ff4500;
+      margin-top: 40px;
+    }
+
+    footer p {
+      font-size: 16px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      header .logo {
+        font-size: 24px;
+      }
+
+      nav ul li {
+        margin: 0 10px;
+      }
+
+      .community-hero h2 {
+        font-size: 36px;
+      }
+
+      .section-title {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="logo">Esports Connect</div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="teams.html">Teams</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+
+
+  <!-- Main Community Content -->
+  <section class="community-content container">
+    <div class="section-title">Connect, Learn & Engage</div>
+
+    <!-- Community Guidelines -->
+    <div class="guidelines">
+      <h3>Community Guidelines</h3>
+      <p>Be respectful and supportive.</p>
+      <p>No hate speech, bullying, or toxic behavior.</p>
+      <p>Keep conversations constructive and relevant.</p>
+    </div>
+
+    <!-- Upcoming Community Events -->
+    <div class="section-title">Upcoming Community Events</div>
+    <div class="events">
+      <div class="event-card">
+        <h4>Scrim Night</h4>
+        <p>Date: March 25, 2025</p>
+        <p>Game: CS:GO</p>
+      </div>
+      <div class="event-card">
+        <h4>Strategy Workshop</h4>
+        <p>Date: April 5, 2025</p>
+        <p>Game: League of Legends</p>
+      </div>
+      <div class="event-card">
+        <h4>Casual Meet-up</h4>
+        <p>Date: April 12, 2025</p>
+        <p>Game: Fortnite</p>
+      </div>
+    </div>
+
+    <!-- Latest Esports News Section -->
+
+    <div class="section-title">Latest Esports News</div>
+    <div class="news">
+      <!-- BGMI News -->
+      <h3>BGMI News</h3>
+      <div class="news-item">
+        <h4>BGMI Championship 2025 Kicks Off</h4>
+        <p>Record participation as the BGMI Championship starts with a bang.</p>
+        <a href="https://en.wikipedia.org/wiki/Battlegrounds_Mobile_India" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>New BGMI Update Released</h4>
+        <p>The latest update introduces innovative game modes and features.</p>
+        <a href="https://en.wikipedia.org/wiki/Battlegrounds_Mobile_India" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>BGMI Teams Revamp Strategies</h4>
+        <p>Pro teams adjust their gameplay ahead of mid-season tournaments.</p>
+        <a href="https://en.wikipedia.org/wiki/Battlegrounds_Mobile_India" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>BGMI Secures Major Sponsorships</h4>
+        <p>Leading brands invest in BGMI, boosting its esports ecosystem.</p>
+        <a href="https://en.wikipedia.org/wiki/Battlegrounds_Mobile_India" target="_blank">Read More</a>
+      </div>
+      
+      <!-- Valorant News -->
+      <h3>Valorant News</h3>
+      <div class="news-item">
+        <h4>Valorant Tournament 2025: Major Upsets</h4>
+        <p>Unexpected results shake up the competitive landscape in Valorant.</p>
+        <a href="https://en.wikipedia.org/wiki/Valorant" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>New Agent Unveiled in Valorant Update</h4>
+        <p>The latest update introduces an innovative agent with unique abilities.</p>
+        <a href="https://en.wikipedia.org/wiki/Valorant" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>Top Valorant Teams Clash in Showdown</h4>
+        <p>Intense matches highlight fierce competition among top teams.</p>
+        <a href="https://en.wikipedia.org/wiki/Valorant" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>Valorant Announces Cross-Platform Play</h4>
+        <p>A new feature promises smoother gameplay across multiple platforms.</p>
+        <a href="https://en.wikipedia.org/wiki/Valorant" target="_blank">Read More</a>
+      </div>
+
+      <!-- CS:GO News -->
+      <h3>CS:GO News</h3>
+      <div class="news-item">
+        <h4>CS:GO Major Championship 2025 Draws Global Fans</h4>
+        <p>The Major Championship is set to captivate audiences worldwide.</p>
+        <a href="https://en.wikipedia.org/wiki/Counter-Strike:_Global_Offensive" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>New CS:GO Patch Improves Game Balance</h4>
+        <p>Recent changes aim to level the playing field in competitive matches.</p>
+        <a href="https://en.wikipedia.org/wiki/Counter-Strike:_Global_Offensive" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>Pro Teams Reveal Upcoming Strategies</h4>
+        <p>Top teams share insights into their preparations for the new season.</p>
+        <a href="https://en.wikipedia.org/wiki/Counter-Strike:_Global_Offensive" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>CS:GO Community Event Celebrates 20 Years</h4>
+        <p>A special event marks two decades of competitive CS:GO action.</p>
+        <a href="https://en.wikipedia.org/wiki/Counter-Strike:_Global_Offensive" target="_blank">Read More</a>
+      </div>
+
+      <!-- Dota 2 News -->
+      <h3>Dota 2 News</h3>
+      <div class="news-item">
+        <h4>Dota 2 International 2025 Breaks Records</h4>
+        <p>The tournament sees record-breaking viewership and prize pools.</p>
+        <a href="https://en.wikipedia.org/wiki/Dota_2" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>New Hero Update Shakes Up Dota 2 Meta</h4>
+        <p>Gameplay dynamics evolve after a major hero update.</p>
+        <a href="https://en.wikipedia.org/wiki/Dota_2" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>Dota 2 Pro League Announces Playoffs</h4>
+        <p>The mid-season playoffs intensify the competition.</p>
+        <a href="https://en.wikipedia.org/wiki/Dota_2" target="_blank">Read More</a>
+      </div>
+      <div class="news-item">
+        <h4>Dota 2 Community Celebrates Anniversary</h4>
+        <p>Special in-game events mark the anniversary of Dota 2's launch.</p>
+        <a href="https://en.wikipedia.org/wiki/Dota_2" target="_blank">Read More</a>
+      </div>
+    </div>
+
+    <!-- Community Chat Section with Server Tabs -->
+    <div class="section-title">Community Chat</div>
+    <div class="chat-container">
+      <h2>Live Chat</h2>
+      <div class="chat-tabs">
+        <div class="chat-tab active" data-server="asian">Asian</div>
+        <div class="chat-tab" data-server="european">European</div>
+        <div class="chat-tab" data-server="na">North American</div>
+      </div>
+      <!-- Chat messages for each server; only one is visible at a time -->
+      <div class="chat-messages" id="chatMessages-asian">
+        <div class="chat-message">
+          <span class="username">AsianPlayer1:</span>
+          <span class="message">Good morning from Tokyo!</span>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages-european" style="display: none;">
+        <div class="chat-message">
+          <span class="username">EU_Gamer:</span>
+          <span class="message">Hello from Berlin!</span>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages-na" style="display: none;">
+        <div class="chat-message">
+          <span class="username">NA_Sniper:</span>
+          <span class="message">Hey everyone from New York!</span>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <!-- Team Up Section with Request Form -->
+    <div class="section-title">Team Up</div>
+    <div class="teamup-section">
+      <h3>Looking for Teammates?</h3>
+      <p>Post your team-up request below or browse existing requests to find your perfect match.</p>
+      <form id="teamupForm">
+        <input type="text" id="requestTitle" placeholder="Request Title" required />
+        <input type="text" id="game" placeholder="Game" required />
+        <textarea id="description" placeholder="Describe your team-up request" required></textarea>
+        <button type="submit">Post Request</button>
+      </form>
+      <div class="teamup-requests" id="teamupRequests">
+        <!-- New requests will appear here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Esports Connect. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Chat functionality with server tabs
+    const servers = {
+      asian: document.getElementById('chatMessages-asian'),
+      european: document.getElementById('chatMessages-european'),
+      na: document.getElementById('chatMessages-na')
+    };
+    let activeServer = 'asian';
+
+    document.querySelectorAll('.chat-tab').forEach(tab => {
+      tab.addEventListener('click', function () {
+        // Remove active class from all tabs
+        document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
+        // Hide all chat message containers
+        Object.values(servers).forEach(div => div.style.display = 'none');
+        // Set active tab
+        this.classList.add('active');
+        activeServer = this.getAttribute('data-server');
+        servers[activeServer].style.display = 'block';
+      });
+    });
+
+    function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const messageText = chatInput.value.trim();
+      if (messageText !== '') {
+        const messageElem = document.createElement('div');
+        messageElem.className = 'chat-message';
+        messageElem.innerHTML = '<span class="username">You:</span><span class="message">' + messageText + '</span>';
+        servers[activeServer].appendChild(messageElem);
+        chatInput.value = '';
+        servers[activeServer].scrollTop = servers[activeServer].scrollHeight;
+      }
+    }
+
+    // Team-Up Request functionality
+    document.getElementById('teamupForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const title = document.getElementById('requestTitle').value.trim();
+      const game = document.getElementById('game').value.trim();
+      const description = document.getElementById('description').value.trim();
+
+      if (title && game && description) {
+        const requestElem = document.createElement('div');
+        requestElem.className = 'teamup-request';
+        requestElem.innerHTML = '<h4>' + title + ' (' + game + ')</h4>' +
+          '<p>' + description + '</p>';
+        document.getElementById('teamupRequests').appendChild(requestElem);
+        // Clear form fields
+        document.getElementById('requestTitle').value = '';
+        document.getElementById('game').value = '';
+        document.getElementById('description').value = '';
+      }
+    });
+
+    //news changing facilty
+
+
+  </script>
+</body>
+</html>

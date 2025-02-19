@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esports Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1300px;
+            gap: 20px;
+            padding: 20px;
+        }
+        .sidebar {
+            width: 25%;
+        }
+        .right-sidebar {
+            width: 20%;
+        }
+        .main-content {
+            width: 55%;
+        }
+        .profile-card {
+            background: linear-gradient(to right, #ff7b00, #ff4500);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .primary {
+            background-color: #ff7b00;
+            color: white;
+        }
+        .secondary {
+            background-color: lightgray;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        h3 {
+            margin-bottom: 10px;
+        }
+        .top-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="profile-card">
+                <img src="profile.jpg" alt="Profile Picture" class="profile-pic">
+                <h2>Alex "Striker" Chen</h2>
+                <p>Professional BGMI Player</p>
+                <p>Team SoulCraft • 3x Tournament Winner</p>
+                <button class="btn primary">Contact Player</button>
+                <button class="btn secondary">View Stats</button>
+            </div>
+            <div class="card">
+                <h3>Player Statistics</h3>
+                <p>Total Kills: <strong>2547</strong></p>
+                <p>Win Rate: <strong>68%</strong></p>
+                <p>Avg Damage: <strong>856</strong></p>
+                <p>Titles: <strong>12</strong></p>
+            </div>
+            <div class="card">
+                <h3>Recent Gameplay</h3>
+                <img src="gameplay.jpg" alt="Gameplay Screenshot">
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <div class="top-section">
+                <img src="profile.jpg" alt="Profile Picture" class="profile-pic">
+                <input type="text" placeholder="Share your gaming achievements...">
+                <button class="btn primary">Upload Clip</button>
+            </div>
+            <div class="card">
+                <h3>Nova Esports</h3>
+                <p>Recruiting • Verified Organization</p>
+                <p>Looking for talented BGMI players to join our professional roster!</p>
+                <button class="btn primary">Apply Now</button>
+            </div>
+            <div class="card">
+                <h3>BGMI Pro League Season 5</h3>
+                <p>Registration Open • Prize Pool: $100,000</p>
+                <img src="tournament.jpg" alt="Tournament Image">
+                <button class="btn primary">Register Now</button>
+            </div>
+        </main>
+        
+        <aside class="sidebar right-sidebar">
+            <div class="card">
+                <h3>Upcoming Tournaments</h3>
+                <p>BGMI Masters - Starts in 2 days</p>
+                <p>Regional Qualifiers - Starts in 5 days</p>
+            </div>
+            <div class="card">
+                <h3>Organizations Hiring</h3>
+                <p>Nova Esports - Looking for IGL</p>
+                <p>Velocity Gaming - Recruiting Support</p>
+            </div>
+            <div class="card">
+                <h3>Top Players</h3>
+                <p>#1 Jonathan Gaming - 4.5 K/D Ratio</p>
+                <p>#2 Scout - 4.2 K/D Ratio</p>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

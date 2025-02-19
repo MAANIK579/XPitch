@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esports Player Login</title>
+    <style>
+        body {
+            background-image: url(https://images.template.net/376679/Purple-Gaming-Background-edit-online-1.jpg);
+            background-size: cover; 
+            background-position: center;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #eaeaea;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            
+        }
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .login-container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 2px solid #555;
+            width: 400px;   
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #eaeaea;
+        }
+        .login-container input {
+            width: 100%;
+            transform: translateX(-10px);   
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #444;
+            color: #eaeaea;
+        }
+        .login-container button {
+            display: block;
+            margin-left: 40px;
+            width: 100%;
+            padding: 10px;
+            margin: 10px ;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .google {
+            background-color: #db4437;
+            color: #fff;
+        }
+        .discord {
+            background-color: #7289da;
+            color: #fff;
+        }
+        .twitter {
+            background-color: #1da1f2;
+            color: #fff;
+        }
+        a.google {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #fff;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login to Esports</h2>
+        <form action="/signup" method="post">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button style="transform: translateX(-10px);" type="submit" onclick="window.location.href='afterlogingpt.html'; return false;">Login</button>
+        </form></form>
+        <a href="signup.html" class="google" style="display: block; text-align: center; padding: 10px; margin: 10px 0; border-radius: 4px; text-decoration: none; color: #fff; background-color: rgb(224, 94, 14);">CREATE ACCOUNT</a>
+        <button class="google">Login with Google</button>
+        <button class="discord">Login with Discord</button>
+        <button class="twitter">Login with Twitter</button>
+    </div>
+</body>
+</html>
