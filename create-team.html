@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create a Team | Esports Hub</title>
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
   <script>
     // Function to create a team and save to localStorage
     function createTeam(event) {
@@ -19,7 +19,8 @@
       localStorage.setItem('teams', JSON.stringify(teams));
       document.getElementById('team-form').reset();
       alert("🎉 Team Created Successfully!");
-      loadRequests();
+      loadMyTeams(); // Update My Teams list
+      loadRequests(); // Update join requests if needed
     }
 
     // Function to load join requests from localStorage
@@ -74,33 +75,88 @@
       loadRequests();
     }
     window.onload = loadRequests;
+    // Function to load my teams from localStorage
+    function loadMyTeams() {
+      let teams = JSON.parse(localStorage.getItem('teams')) || [];
+      let myTeamList = document.getElementById('my-team-list');
+      myTeamList.innerHTML = '';
+      if (teams.length === 0) {
+        myTeamList.innerHTML = "<p>No teams created yet.</p>";
+        return;
+      }
+      teams.forEach((team, index) => {
+        let teamCard = document.createElement('div');
+        teamCard.classList.add('player-info');
+        teamCard.innerHTML = `
+            <p><strong>🎮 Team Name:</strong> ${team.teamName}</p>
+            <p><strong>🎮 Game:</strong> ${team.game}</p>
+            <p><strong>📍 Role:</strong> ${team.role}</p>
+            <p><strong>💬 Description:</strong> ${team.description}</p>
+            <div class="actions">
+                <button class="action-btn delete-btn" onclick="deleteMyTeam(${index})">🗑️ Delete</button>
+            </div>
+        `;
+        myTeamList.appendChild(teamCard);
+      });
+    }
+
+    // Function to delete a team
+    function deleteMyTeam(index) {
+      let teams = JSON.parse(localStorage.getItem('teams')) || [];
+      teams.splice(index, 1);
+      localStorage.setItem('teams', JSON.stringify(teams));
+      loadMyTeams();
+      loadRequests();
+      alert("Team deleted successfully!");
+    }
+
+    // Modified toggle function:
+    // When "My Teams" is clicked, it always reloads and displays the teams
+    function toggleMyTeams() {
+      let myTeamList = document.getElementById('my-team-list');
+      loadMyTeams();
+      myTeamList.style.display = 'block';
+    }
   </script>
   <style>
+    main {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      flex-wrap: nowrap;
+    }
+
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: #121212;
-      color: white;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #eee;
       margin: 0;
       padding: 0;
     }
 
     header {
-      background: linear-gradient(90deg, #ff4500, #e03e00);
+      background: linear-gradient(90deg, #0f0c29, #302b63, #24243e);
+      color: #fff;
       padding: 20px;
-      font-size: 28px;
-      font-weight: bold;
-      text-transform: uppercase;
+      font-size: 24px;
       text-align: center;
-    }
-
-    main {
-      padding: 20px;
     }
 
     .container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: space-around;
+      gap: 20px;
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    .container2 {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      justify-content: space-around;
       gap: 20px;
       width: 90%;
       max-width: 1200px;
@@ -109,16 +165,19 @@
 
     .form-section,
     .requests-section {
-      background: #222;
-      padding: 15px;
+      background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+      color: #eee;
+      padding: 20px;
+      margin: 10px 0;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
       width: 48%;
       min-width: 300px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 69, 0, 0.5);
     }
 
-    form {
-      width: 100%;
+    .form-section {
+      max-height: fit-content;
     }
 
     input,
@@ -131,27 +190,26 @@
       padding: 10px;
       border-radius: 5px;
       border: none;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 14px;
     }
 
     button {
-      background-color: #ff4500;
+      background: linear-gradient(90deg, #ff512f, #dd2476);
       color: white;
       cursor: pointer;
       font-weight: bold;
-      transition: background-color 0.3s;
+      transition: background 0.3s;
     }
 
     button:hover {
-      background-color: #e03e00;
-    }
-
-    .team-requests {
-      margin-top: 10px;
+      background: linear-gradient(90deg, #e84343, #c0392b);
     }
 
     .player-info {
-      background: #333;
-      padding: 10px;
+      background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+      padding: 15px;
       margin: 10px 0;
       border-radius: 5px;
     }
@@ -168,40 +226,37 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background 0.3s;
     }
 
     .chat-btn {
-      background-color: #007bff;
-    }
-
-    .chat-btn:hover {
-      background-color: #0069d9;
+      background: linear-gradient(90deg, #007bff, #0069d9);
     }
 
     .accept-btn {
-      background-color: #28a745;
-    }
-
-    .accept-btn:hover {
-      background-color: #218838;
+      background: linear-gradient(90deg, #28a745, #218838);
     }
 
     .decline-btn {
-      background-color: #dc3545;
-    }
-
-    .decline-btn:hover {
-      background-color: #c82333;
+      background: linear-gradient(90deg, #dc3545, #c82333);
     }
 
     .back-btn {
+      display: inline-block;
       text-decoration: none;
-      color: white;
+      background: linear-gradient(90deg, #ff512f, #dd2476);
+      color: #fff;
       margin-top: 20px;
-      font-size: 18px;
-      display: block;
-      text-align: center;
+      margin-left: 20px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      padding: 8px 16px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .back-btn:hover {
+      background: linear-gradient(90deg, #e84343, #c0392b);
     }
   </style>
 </head>
@@ -215,21 +270,23 @@
         <h2>Create Your Team</h2>
         <form id="team-form" onsubmit="createTeam(event)">
           <label for="teamName">Team Name:</label>
-          <input style="width: 96%;" type="text" id="teamName" required>
+          <input style="width: 97%;" type="text" id="teamName" required>
           <label for="game">Game:</label>
           <select id="game" required>
-            <option value="BGMI">BGMI</option>
-            <option value="Valorant">Valorant</option>
-            <option value="CS:GO">CS:GO</option>
+            <option style="color: black;" value="BGMI">BGMI</option>
+            <option style="color: black;" value="Valorant">Valorant</option>
+            <option style="color: black;" value="CS:GO">CS:GO</option>
           </select>
           <label for="role">Role Needed:</label>
           <select id="role" required>
-            <option value="IGl">Igl</option>
-            <option value="Valorant">Valorant</option>
-            <option value="CS:GO">CS:GO</option>
+            <option style="color: black;" value="IGl">IGL</option>
+            <option style="color: black;" value="Assaulter">Assaulter</option>
+            <option style="color: black;" value="Sniper">Sniper</option>
+            <option style="color: black;" value="support">Support</option>
+            <option style="color: black;" value="free">Freeman</option>
           </select>
           <label for="description">Description:</label>
-          <textarea style="width: 96%;" id="description" required></textarea>
+          <textarea style="width: 97%;" id="description"></textarea>
           <button type="submit">🚀 Create Team</button>
         </form>
       </div>
@@ -241,8 +298,17 @@
         </div>
       </div>
     </div>
-    <a href="teams.html" class="back-btn">🔙 Back</a>
+
+    <div class="container2">
+      <div class="my-teams-section">
+        <h2 onclick="toggleMyTeams()" style="cursor: pointer;">🏆 My Teams</h2>
+        <div id="my-team-list" style="display: none;">
+          <p>No teams created yet.</p>
+        </div>
+      </div>
+    </div>
   </main>
+  <a href="teams.html" class="back-btn">Back</a>
 </body>
 
 </html>
