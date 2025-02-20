@@ -350,12 +350,12 @@
         </nav>
         <div class="profile-dropdown">
             <button class="profile-btn" onclick="toggleDropdown()">
-                <img src="https://cdn-icons-png.freepik.com/256/3177/3177440.png" alt="Profile Icon"
+                <img id="userIcon" src="https://cdn-icons-png.freepik.com/256/3177/3177440.png" alt="Profile Icon"
                     style="width: 34px; height: 34px; border-radius: 50%;" />
             </button>
             <div class="dropdown-content" id="dropdown-content">
-                <a href="#">My Profile</a>
-                <a href="#">Add Posts</a>
+                <a href="profile.html">My Profile</a>
+                <a href="#">Posts</a>
                 <a href="#">Settings</a>
                 <a href="#">Logout</a>
             </div>
@@ -413,17 +413,17 @@
             <div class="player-card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp71m7QRVZZDjiOb9b1g70qvLuKbXPClsCfA&s" alt="Player" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
                 <h4>Jonathan</h4>
-                <p>Valorant | Team Thunder</p>
+                <p>BGMI | Team GODL</p>
             </div>
             <div class="player-card">
-                <img src="https://via.placeholder.com/80" alt="Player">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgzrIHcWpyBpu2VGdVa4vomfiyg49VpG7nA&s" alt="Player" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
                 <h4>Chris \"EagleEye\" Brown</h4>
                 <p>CS:GO | Team Alpha</p>
             </div>
             <div class="player-card">
-                <img src="https://via.placeholder.com/80" alt="Player">
-                <h4>Max \"Ace\" Kim</h4>
-                <p>Fortnite | Team Royale</p>
+                <img src="https://i.pinimg.com/736x/19/87/54/198754e959f38a567a114cbef9fd1f8c.jpg" alt="Player">
+                <h4>Ajju Bhai</h4>
+                <p>Free Fire</p>
             </div>
         </div>
     </section>
@@ -440,7 +440,23 @@
     <footer>
         <p>&copy; 2025 EsportsNetwork. All rights reserved.</p>
     </footer>
-
+    <script>
+        // Load profile image from localStorage when page loads
+        window.onload = function() {
+            const savedProfile = JSON.parse(localStorage.getItem("profileData"));
+            if (savedProfile && savedProfile.profileImage) {
+                document.getElementById("userIcon").src = savedProfile.profileImage;
+            }
+        };
+    
+        // Listen for profile image updates from the profile page
+        window.addEventListener("message", function(event) {
+            if (event.data.profileImage) {
+                document.getElementById("userIcon").src = event.data.profileImage;
+            }
+        });
+    </script>
+    
 </body>
 
 </html>

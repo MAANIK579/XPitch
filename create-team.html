@@ -1,155 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a Team | Esports Hub</title>
-    <link rel="stylesheet" href="styles.css">
-    <script>
-        function createTeam(event) {
-            event.preventDefault();
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create a Team | Esports Hub</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Function to create a team and save to localStorage
+    function createTeam(event) {
+      event.preventDefault();
+      let teamName = document.getElementById('teamName').value.trim();
+      let game = document.getElementById('game').value;
+      let role = document.getElementById('role').value;
+      let description = document.getElementById('description').value.trim();
+      let teams = JSON.parse(localStorage.getItem('teams')) || [];
+      teams.push({ teamName, game, role, description, requests: [] });
+      localStorage.setItem('teams', JSON.stringify(teams));
+      document.getElementById('team-form').reset();
+      alert("🎉 Team Created Successfully!");
+      loadRequests();
+    }
 
-            let teamName = document.getElementById('teamName').value;
-            let game = document.getElementById('game').value;
-            let role = document.getElementById('role').value;
-            let description = document.getElementById('description').value;
-
-            let teams = JSON.parse(localStorage.getItem('teams')) || [];
-            teams.push({ teamName, game, role, description, requests: [] });
-
-            localStorage.setItem('teams', JSON.stringify(teams));
-            document.getElementById('team-form').reset();
-            alert("🎉 Team Created Successfully!");
-        }
-
-        function loadRequests() {
-            let teams = JSON.parse(localStorage.getItem('teams')) || [];
-            let requestList = document.getElementById('request-list');
-            requestList.innerHTML = '';
-
-            teams.forEach((team) => {
-                if (team.requests.length > 0) {
-                    let teamRequests = document.createElement('div');
-                    teamRequests.classList.add('team-requests');
-                    teamRequests.innerHTML = `<h3>🏆 ${team.teamName} - ${team.game}</h3>`;
-
-                    team.requests.forEach((req) => {
-                        teamRequests.innerHTML += `
-                            <div class="player-info">
-                                <p><strong>🎮 Player Name:</strong> ${req.playerName}</p>
-                                <p><strong>📍 Role:</strong> ${req.role}</p>
-                                <p><strong>💬 Message:</strong> ${req.message}</p>
-                            </div>
-                        `;
-                    });
-
-                    requestList.appendChild(teamRequests);
-                }
-            });
-        }
-
-        function toggleRequests() {
-            let requestSection = document.getElementById('request-section');
-            requestSection.style.display = requestSection.style.display === "none" ? "block" : "none";
-        }
-
-        window.onload = loadRequests;
-    </script>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #121212;
-            color: white;
-            text-align: center;
-        }
-        header {
-            background: linear-gradient(90deg, #ff4500, #e03e00);
-            padding: 20px;
-            font-size: 28px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        form, .team-requests {
-            background: #222;
-            padding: 15px;
-            margin: 15px auto;
-            border-radius: 10px;
-            width: 50%;
-            box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
-        }
-        input, select, textarea, button {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #ff4500;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #e03e00;
-        }
-        .player-info {
-            background: #333;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-        .back-btn {
-            display: block;
-            text-decoration: none;
-            color: white;
-            margin-top: 15px;
-            font-size: 18px;
-        }
-        #request-section {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <header>🔥 Create an Esports Team 🔥</header>
-    <main>
-        <section>
-            <h2>Create Your Team</h2>
-            <form id="team-form" onsubmit="createTeam(event)">
-                <label for="teamName">Team Name:</label>
-                <input type="text" id="teamName" required>
-                
-                <label for="game">Game:</label>
-                <select id="game" required>
-                    <option value="BGMI">BGMI</option>
-                    <option value="Valorant">Valorant</option>
-                    <option value="CS:GO">CS:GO</option>
-                </select>
-
-                <label for="role">Role Needed:</label>
-                <input type="text" id="role" required>
-
-                <label for="description">Description:</label>
-                <textarea id="description" required></textarea>
-
-                <button type="submit">🚀 Create Team</button>
-            </form>
-        </section>
-
-        <section>
-            <button onclick="toggleRequests()">📩 View Join Requests</button>
-            <div id="request-section">
-                <h2>🔔 Team Join Requests</h2>
-                <div id="request-list">
-                    <p>No requests yet.</p>
+    // Function to load join requests from localStorage
+    function loadRequests() {
+      let teams = JSON.parse(localStorage.getItem('teams')) || [];
+      let requestList = document.getElementById('request-list');
+      requestList.innerHTML = '';
+      teams.forEach((team, teamIndex) => {
+        if (team.requests && team.requests.length > 0) {
+          let teamRequests = document.createElement('div');
+          teamRequests.classList.add('team-requests');
+          teamRequests.innerHTML = `<h3>🏆 ${team.teamName} - ${team.game}</h3>`;
+          team.requests.forEach((req, reqIndex) => {
+            teamRequests.innerHTML += `
+              <div class="player-info">
+                <p><strong>🎮 Player Name:</strong> ${req.playerName}</p>
+                <p><strong>📍 Role:</strong> ${req.role}</p>
+                <p><strong>🆔 UID:</strong> ${req.uid}</p>
+                <p><strong>💬 Message:</strong> ${req.message}</p>
+                <div class="actions">
+                  <button class="action-btn chat-btn" onclick="chat('${req.playerName}')">💬 Chat</button>
+                  <button class="action-btn accept-btn" onclick="accept(${teamIndex}, ${reqIndex})">✅ Accept</button>
+                  <button class="action-btn decline-btn" onclick="decline(${teamIndex}, ${reqIndex})">❌ Decline</button>
                 </div>
-            </div>
-        </section>
+              </div>
+            `;
+          });
+          requestList.appendChild(teamRequests);
+        }
+      });
+      if (requestList.innerHTML.trim() === '') {
+        requestList.innerHTML = "<p>No requests yet.</p>";
+      }
+    }
 
-        <a href="teams.html" class="back-btn">🔙 Back</a>
-    </main>
+    // Placeholder functions for actions
+    function chat(playerName) {
+      alert("Initiate chat with " + playerName);
+    }
+    function accept(teamIndex, reqIndex) {
+      let teams = JSON.parse(localStorage.getItem('teams')) || [];
+      teams[teamIndex].requests.splice(reqIndex, 1);
+      localStorage.setItem('teams', JSON.stringify(teams));
+      alert("✅ Player accepted!");
+      loadRequests();
+    }
+    function decline(teamIndex, reqIndex) {
+      let teams = JSON.parse(localStorage.getItem('teams')) || [];
+      teams[teamIndex].requests.splice(reqIndex, 1);
+      localStorage.setItem('teams', JSON.stringify(teams));
+      alert("❌ Player request declined.");
+      loadRequests();
+    }
+    window.onload = loadRequests;
+  </script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #121212;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: linear-gradient(90deg, #ff4500, #e03e00);
+      padding: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    .form-section,
+    .requests-section {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+      width: 48%;
+      min-width: 300px;
+    }
+
+    form {
+      width: 100%;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      background-color: #ff4500;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #e03e00;
+    }
+
+    .team-requests {
+      margin-top: 10px;
+    }
+
+    .player-info {
+      background: #333;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+
+    .actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .chat-btn {
+      background-color: #007bff;
+    }
+
+    .chat-btn:hover {
+      background-color: #0069d9;
+    }
+
+    .accept-btn {
+      background-color: #28a745;
+    }
+
+    .accept-btn:hover {
+      background-color: #218838;
+    }
+
+    .decline-btn {
+      background-color: #dc3545;
+    }
+
+    .decline-btn:hover {
+      background-color: #c82333;
+    }
+
+    .back-btn {
+      text-decoration: none;
+      color: white;
+      margin-top: 20px;
+      font-size: 18px;
+      display: block;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <header>🔥 Create an Esports Team 🔥</header>
+  <main>
+    <div class="container">
+      <!-- Left Side: Create Team Form -->
+      <div class="form-section">
+        <h2>Create Your Team</h2>
+        <form id="team-form" onsubmit="createTeam(event)">
+          <label for="teamName">Team Name:</label>
+          <input style="width: 96%;" type="text" id="teamName" required>
+          <label for="game">Game:</label>
+          <select id="game" required>
+            <option value="BGMI">BGMI</option>
+            <option value="Valorant">Valorant</option>
+            <option value="CS:GO">CS:GO</option>
+          </select>
+          <label for="role">Role Needed:</label>
+          <select id="role" required>
+            <option value="IGl">Igl</option>
+            <option value="Valorant">Valorant</option>
+            <option value="CS:GO">CS:GO</option>
+          </select>
+          <label for="description">Description:</label>
+          <textarea style="width: 96%;" id="description" required></textarea>
+          <button type="submit">🚀 Create Team</button>
+        </form>
+      </div>
+      <!-- Right Side: Join Requests -->
+      <div class="requests-section">
+        <h2>📩 Join Requests</h2>
+        <div id="request-list">
+          <p>No requests yet.</p>
+        </div>
+      </div>
+    </div>
+    <a href="teams.html" class="back-btn">🔙 Back</a>
+  </main>
 </body>
+
 </html>
