@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join a Team | Esports Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function loadTeams() {
+            let teams = JSON.parse(localStorage.getItem('teams')) || [];
+            let teamList = document.getElementById('team-list');
+            teamList.innerHTML = '';
+
+            if (teams.length === 0) {
+                teamList.innerHTML = '<p>No teams available. Be the first to create one!</p>';
+                return;
+            }
+
+            teams.forEach((team, index) => {
+                let teamCard = document.createElement('div');
+                teamCard.classList.add('team-card');
+                teamCard.innerHTML = `
+                    <h3>🏆 ${team.teamName} - 🎮 ${team.game}</h3>
+                    <p><strong>Role Needed:</strong> ${team.role}</p>
+                    <p>${team.description}</p>
+                    <button onclick="requestToJoin(${index})">🚀 Request to Join</button>
+                    <p id="success-${index}" class="success-message"></p>
+                `;
+                teamList.appendChild(teamCard);
+            });
+        }
+
+        function requestToJoin(index) {
+            let successMsg = document.getElementById(`success-${index}`);
+            successMsg.innerText = "✅ Request Sent Successfully!";
+            successMsg.style.color = "lime";
+        }
+
+        window.onload = loadTeams;
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+        }
+        header {
+            background: linear-gradient(90deg, #ff4500, #e03e00);
+            padding: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .team-card {
+            background: #222;
+            padding: 15px;
+            margin: 15px auto;
+            border-radius: 10px;
+            width: 50%;
+            box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+        }
+        button {
+            background-color: #ff4500;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #e03e00;
+        }
+        .success-message {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .back-btn {
+            display: block;
+            text-decoration: none;
+            color: white;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <header>🔥 Join an Esports Team 🔥</header>
+    <main>
+        <section>
+            <h2>Available Teams</h2>
+            <div id="team-list">
+                <p>Loading teams...</p>
+            </div>
+        </section>
+        <a href="teams.html" class="back-btn">🔙 Back</a>
+    </main>
+</body>
+</html>

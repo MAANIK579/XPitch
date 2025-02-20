@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Team | Esports Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function createTeam(event) {
+            event.preventDefault();
+
+            let teamName = document.getElementById('teamName').value;
+            let game = document.getElementById('game').value;
+            let role = document.getElementById('role').value;
+            let description = document.getElementById('description').value;
+
+            let teams = JSON.parse(localStorage.getItem('teams')) || [];
+            teams.push({ teamName, game, role, description, requests: [] });
+
+            localStorage.setItem('teams', JSON.stringify(teams));
+            document.getElementById('team-form').reset();
+            alert("🎉 Team Created Successfully!");
+        }
+
+        function loadRequests() {
+            let teams = JSON.parse(localStorage.getItem('teams')) || [];
+            let requestList = document.getElementById('request-list');
+            requestList.innerHTML = '';
+
+            teams.forEach((team) => {
+                if (team.requests.length > 0) {
+                    let teamRequests = document.createElement('div');
+                    teamRequests.classList.add('team-requests');
+                    teamRequests.innerHTML = `<h3>🏆 ${team.teamName} - ${team.game}</h3>`;
+
+                    team.requests.forEach((req) => {
+                        teamRequests.innerHTML += `
+                            <div class="player-info">
+                                <p><strong>🎮 Player Name:</strong> ${req.playerName}</p>
+                                <p><strong>📍 Role:</strong> ${req.role}</p>
+                                <p><strong>💬 Message:</strong> ${req.message}</p>
+                            </div>
+                        `;
+                    });
+
+                    requestList.appendChild(teamRequests);
+                }
+            });
+        }
+
+        function toggleRequests() {
+            let requestSection = document.getElementById('request-section');
+            requestSection.style.display = requestSection.style.display === "none" ? "block" : "none";
+        }
+
+        window.onload = loadRequests;
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+        }
+        header {
+            background: linear-gradient(90deg, #ff4500, #e03e00);
+            padding: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        form, .team-requests {
+            background: #222;
+            padding: 15px;
+            margin: 15px auto;
+            border-radius: 10px;
+            width: 50%;
+            box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+        }
+        input, select, textarea, button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #e03e00;
+        }
+        .player-info {
+            background: #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .back-btn {
+            display: block;
+            text-decoration: none;
+            color: white;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+        #request-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>🔥 Create an Esports Team 🔥</header>
+    <main>
+        <section>
+            <h2>Create Your Team</h2>
+            <form id="team-form" onsubmit="createTeam(event)">
+                <label for="teamName">Team Name:</label>
+                <input type="text" id="teamName" required>
+                
+                <label for="game">Game:</label>
+                <select id="game" required>
+                    <option value="BGMI">BGMI</option>
+                    <option value="Valorant">Valorant</option>
+                    <option value="CS:GO">CS:GO</option>
+                </select>
+
+                <label for="role">Role Needed:</label>
+                <input type="text" id="role" required>
+
+                <label for="description">Description:</label>
+                <textarea id="description" required></textarea>
+
+                <button type="submit">🚀 Create Team</button>
+            </form>
+        </section>
+
+        <section>
+            <button onclick="toggleRequests()">📩 View Join Requests</button>
+            <div id="request-section">
+                <h2>🔔 Team Join Requests</h2>
+                <div id="request-list">
+                    <p>No requests yet.</p>
+                </div>
+            </div>
+        </section>
+
+        <a href="teams.html" class="back-btn">🔙 Back</a>
+    </main>
+</body>
+</html>
