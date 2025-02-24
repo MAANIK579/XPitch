@@ -1,100 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Esports Player Login</title>
+    <title>Login</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            background-image: url(https://images.template.net/376679/Purple-Gaming-Background-edit-online-1.jpg);
-            background-size: cover; 
-            background-position: center;
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #eaeaea;
+            background-color: #f0f2f5;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            
         }
-        .login-container {
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        form {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 1rem;
         }
-        .login-container {
-            background-color: #333;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            border: 2px solid #555;
-            width: 400px;   
+
+        input {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
         }
-        .login-container h2 {
-            margin-bottom: 20px;
-            color: #eaeaea;
-        }
-        .login-container input {
-            width: 100%;
-            transform: translateX(-10px);   
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #555;
-            border-radius: 4px;
-            background-color: #444;
-            color: #eaeaea;
-        }
-        .login-container button {
-            display: block;
-            margin-left: 40px;
-            width: 100%;
-            padding: 10px;
-            margin: 10px ;
+
+        button {
+            padding: 0.8rem;
+            background-color: #1877f2;
+            color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 16px;
+            transition: background-color 0.2s;
         }
-        
-        .google {
-            background-color: #db4437;
-            color: #fff;
+
+        button:hover {
+            background-color: #166fe5;
         }
-        .discord {
-            background-color: #7289da;
-            color: #fff;
-        }
-        .twitter {
-            background-color: #1da1f2;
-            color: #fff;
-        }
-        a.google {
-            display: block;
+
+        .toggle-form {
             text-align: center;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
+            margin-top: 1rem;
+            color: #666;
+        }
+
+        .toggle-form a {
+            color: #1877f2;
             text-decoration: none;
-            color: #fff;
-            background-color: green;
+            font-weight: 600;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 1rem;
+            color: #ff0000;
+            min-height: 1.5rem;
         }
     </style>
 </head>
+
 <body>
-    <div class="login-container">
-        <h2>Login to Esports</h2>
-        <form action="/signup" method="post">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button style="transform: translateX(-10px);" type="submit" onclick="window.location.href='afterlogingpt.html'; return false;">Login</button>
-        </form></form>
-        <a href="signup.html" class="google" style="display: block; text-align: center; padding: 10px; margin: 10px 0; border-radius: 4px; text-decoration: none; color: #fff; background-color: rgb(224, 94, 14);">CREATE ACCOUNT</a>
-        <button class="google">Login with Google</button>
-        <button class="discord">Login with Discord</button>
-        <button class="twitter">Login with Twitter</button>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+            <div class="toggle-form">
+                Don't have an account? <a href="signup.html">Sign up</a>
+            </div>
+        </form>
+        <p id="message"></p>
     </div>
+
+    <script>
+        // Update the submit handler
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                    credentials: 'include' // Crucial for cookies
+                });
+
+                const result = await response.json();
+                document.getElementById('message').textContent = result.message;
+
+                if (response.status === 200) {
+                    setTimeout(() => {
+                        window.location.href = '/afterlogingpt.html'; // Changed redirect
+                    }, 500);
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('message').textContent = 'Connection failed. Check server';
+            }
+        });
+    </script>
 </body>
+
 </html>

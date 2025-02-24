@@ -1,110 +1,123 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import cors from "cors";
-import multer from "multer";
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/user.js";
-import teamRoutes from "./routes/team.js";
-import tournamentRoutes from "./routes/tournament.js";
-import communityRoutes from "./routes/community.js";
-
-dotenv.config();
-
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const session = require('express-session');
+const cookie = require('cookie-parser');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const MongoStore = require('connect-mongo');
+
 // Middleware
+app.use(cookie());
+app.use(cors({
+    origin: 'http://127.0.0.1:5500', // Change to your actual frontend port
+    credentials: true
+}));
 app.use(express.json());
-app.use(cors());
-app.use("/uploads", express.static("uploads")); // Serve uploaded files
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+        mongoUrl: 'mongodb+srv://gargruchimay1984:4OnMnds2rgg8anek@cluster0.s5f9p.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+    }),
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 1 day
+}));
 
-// Set up Multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
-const upload = multer({ storage });
-
-// Post Schema
-const postSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  author: { type: String, required: true },
-  media: { type: String }, // Store image/video file path
-  createdAt: { type: Date, default: Date.now },
+mongoose.connection.on('error', err => {
+    console.error('MongoDB connection error:', err);
 });
 
-const Post = mongoose.model("Post", postSchema);
+// MongoDB Connection
+mongoose.connect('mongodb+srv://gargruchimay1984:4OnMnds2rgg8anek@cluster0.s5f9p.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
-// Add Post Route (with file upload)
-app.post("/api/posts", upload.single("media"), async (req, res) => {
-  try {
-    const { title, content, author } = req.body;
-    const media = req.file ? `/uploads/${req.file.filename}` : null;
-    
-    if (!title || !content || !author) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+// User Schema and Model
+const userSchema = new mongoose.Schema({
+    username: String,
+    fullname: String,
+    email: { type: String, unique: true },
+    password: String
+});
+const User = mongoose.model('User', userSchema);
+
+// Auth Middleware
+const requireAuth = (req, res, next) => {
+    console.log(req.cookies)
+    if (!req.session.userEmail) {
+        return res.status(401).json({ message: 'Unauthorized' });
     }
-    const newPost = new Post({ title, content, author, media });
-    await newPost.save();
-    res.status(201).json({ success: true, message: "Post created successfully", post: newPost });
-  } catch (error) {
-    console.error("Error adding post:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
-  }
-});
-
-// Get All Posts Route
-app.get("/api/posts", async (req, res) => {
-  try {
-    const posts = await Post.find();
-    res.status(200).json({ success: true, posts });
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
-  }
-});
-
-// Update Post Route
-app.put("/api/posts/:id", upload.single("media"), async (req, res) => {
-  try {
-    const { title, content, author } = req.body;
-    const media = req.file ? `/uploads/${req.file.filename}` : undefined;
-    
-    const updatedPost = await Post.findByIdAndUpdate(
-      req.params.id,
-      { title, content, author, ...(media && { media }) },
-      { new: true, runValidators: true }
-    );
-    if (!updatedPost) {
-      return res.status(404).json({ success: false, message: "Post not found" });
-    }
-    res.status(200).json({ success: true, message: "Post updated successfully", post: updatedPost });
-  } catch (error) {
-    console.error("Error updating post:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
-  }
-});
+    next();
+};
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/teams", teamRoutes);
-app.use("/api/tournaments", tournamentRoutes);
-app.use("/api/community", communityRoutes);
+app.post('/signup', async (req, res) => {
+    try {
+        const { username, fullname, email, password } = req.body;
+        const existingUser = await User.findOne({ email });
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.error("MongoDB connection error:", err));
+        if (existingUser) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+        const newUser = new User({ username, fullname, email, password });
+        await newUser.save();
+
+        // Automatically log in after signup
+        req.session.userEmail = newUser.email;
+        res.status(201).json({ message: "User created successfully" });
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
 });
+
+// Update login route with better error handling
+app.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            console.log('Login attempt with non-existent email:', email);
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        if (user.password !== password) {
+            console.log('Password mismatch for email:', email);
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        req.session.userEmail = user.email;
+        console.log('Successful login for:', email);
+        console.log(req.session)
+        res.status(200)
+            .json({ message: "Login successful" });
+
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+app.get('/profile', requireAuth, async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.session.userEmail });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({
+            username: user.username,
+            fullname: user.fullname,
+            email: user.email
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Esports Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .settings-container {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .settings-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff4500;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 2px solid #333;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #e0e0e0;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #ff4500;
+            border-bottom: 2px solid #ff4500;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            margin-bottom: 15px;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(90deg, #ff512f, #dd2476);
+            color: #fff;
+            transition: background 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background: linear-gradient(90deg, #e84343, #c0392b);
+        }
+
+        .change-password-btn {
+            background: #333;
+            color: #e0e0e0;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .change-password-btn:hover {
+            background: #444;
+        }
+
+        .password-input {
+            display: none;
+        }
+
+        .password-input.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="settings-container">
+        <h2>Settings</h2>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" data-tab="profile">Profile</div>
+            <div class="tab" data-tab="theme">Theme</div>
+            <div class="tab" data-tab="language">Language</div>
+            <div class="tab" data-tab="notifications">Notifications</div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile" class="tab-content active">
+            <h3 style="margin-bottom: 10px;">Profile Settings</h3>
+            <label for="username">Username</label>
+            <input type="text" id="username" value="Player123">
+
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" value="Player123">
+
+            <label for="email">Email</label>
+            <input type="email" id="email" value="player@mail.com">
+
+            <button class="change-password-btn" onclick="togglePasswordInput()">Change Password</button>
+            <div class="password-input" id="passwordInput">
+                <label for="password">New Password</label>
+                <input type="password" id="password" placeholder="Enter new password">
+            </div>
+        </div>
+
+        <!-- Theme Tab -->
+        <div id="theme" class="tab-content">
+            <h3 style="margin-bottom: 10px;">Theme Settings</h3>
+            <label for="theme">Select Theme</label>
+            <select id="theme">
+                <option value="dark">Dark Mode</option>
+                <option value="light">Light Mode</option>
+            </select>
+        </div>
+
+        <!-- Language Tab -->
+        <div id="language" class="tab-content">
+            <h3 style="margin-bottom: 10px;">Language Settings</h3>
+            <label for="language">Select Language</label>
+            <select id="language">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+            </select>
+        </div>
+
+        <!-- Notifications Tab -->
+        <div id="notifications" class="tab-content">
+            <h3 style="margin-bottom: 10px;">Notification Settings</h3>
+            <label for="notifications">Enable Notifications</label>
+            <select id="notifications">
+                <option value="enabled">Enabled</option>
+                <option value="disabled">Disabled</option>
+            </select>
+        </div>
+
+        <!-- Save Button -->
+        <button class="save-btn" onclick="saveSettings(event)">Save Changes</button>
+    </div>
+
+    <script>
+        // Tab Functionality
+        const tabs = document.querySelectorAll(".tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove("active"));
+                tabContents.forEach(content => content.classList.remove("active"));
+
+                // Add active class to the clicked tab and corresponding content
+                tab.classList.add("active");
+                const tabId = tab.getAttribute("data-tab");
+                document.getElementById(tabId).classList.add("active");
+            });
+        });
+
+        // Load saved settings from localStorage
+        window.onload = function () {
+            const savedSettings = JSON.parse(localStorage.getItem("userSettings")) || {};
+            if (savedSettings) {
+                document.getElementById("username").value = savedSettings.username || "Player123";
+                document.getElementById("fullname").value = savedSettings.fullname || "Player123";
+                document.getElementById("email").value = savedSettings.email || "player@mail.com";
+                document.getElementById("password").value = savedSettings.password || "";
+                document.getElementById("theme").value = savedSettings.theme || "dark";
+                document.getElementById("language").value = savedSettings.language || "en";
+                document.getElementById("notifications").value = savedSettings.notifications || "enabled";
+            }
+        };
+
+        // Save settings to localStorage
+        function saveSettings(event) {
+            event.preventDefault();
+            const settings = {
+                username: document.getElementById("username").value,
+                fullname: document.getElementById("fullname").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                theme: document.getElementById("theme").value,
+                language: document.getElementById("language").value,
+                notifications: document.getElementById("notifications").value
+            };
+            localStorage.setItem("userSettings", JSON.stringify(settings));
+            alert("Settings saved successfully!");
+            window.opener.postMessage({ settings: settings }, "*"); // Notify profile page of changes
+        }
+
+        // Toggle password input visibility
+        function togglePasswordInput() {
+            const passwordInput = document.getElementById("passwordInput");
+            passwordInput.classList.toggle("active");
+        }
+    </script>
+</body>
+
+</html>

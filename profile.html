@@ -4,202 +4,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Esports Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Profile</title>
     <style>
-        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #121212;
-            color: #e0e0e0;
+            background-color: #f0f2f5;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            padding: 20px;
         }
 
         .profile-container {
-            background: #1e1e1e;
-            padding: 30px;
+            background: white;
+            padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-            width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
             max-width: 500px;
+        }
+
+        .profile-header {
             text-align: center;
+            margin-bottom: 2rem;
         }
 
-        .profile-pic {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ff512f;
+        .profile-details div {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
         }
 
-        .upload-btn {
-            margin-top: 10px;
+        .detail-label {
+            font-weight: 600;
+            color: #666;
             display: block;
-            color: #fff;
-            background: linear-gradient(90deg, #ff512f, #dd2476);
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            margin-bottom: 0.5rem;
         }
 
-        .upload-btn:hover {
-            background: linear-gradient(90deg, #e84343, #c0392b);
-        }
-
-        .profile-container input,
-        .profile-container select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            background: #2a2a2a;
-            color: #e0e0e0;
-        }
-
-        .save-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            background: linear-gradient(90deg, #ff512f, #dd2476);
-            color: #fff;
-            transition: background 0.3s ease;
-        }
-
-        .save-btn:hover {
-            background: linear-gradient(90deg, #e84343, #c0392b);
+        .detail-value {
+            font-size: 1.1rem;
+            color: #333;
         }
     </style>
 </head>
 
 <body>
     <div class="profile-container">
-        <h2>Your Profile</h2>
-        <!-- Profile Picture -->
-        <img id="profilePic" src="profile-placeholder.jpg" alt="Profile Picture" class="profile-pic">
-
-        <!-- Hidden File Input (Will Be Triggered by "Change Image" Button) -->
-        <input type="file" id="profileImageUpload" accept="image/*" class="upload-btn"
-            onchange="uploadProfileImage(event)">
-
-        <!-- "Change Image" Button (Hidden Initially, Shown After First Upload) -->
-        <button id="changeImageBtn" class="upload-btn" style="display: none;" onclick="changeProfileImage()">Change
-            Image</button>
-
-
-        <label>Username</label>
-        <input type="text" id="username" value="Player123" readonly>
-
-        <label>Email</label>
-        <input type="email" id="email" value="player@mail.com">
-
-        <label>Games You Play</label>
-        <input type="text" id="games" value="BGMI, Valorant" readonly>
-
-        <label>Date of Birth</label>
-        <input type="date" id="dob" value="2002-05-15">
-
-        <label>Game UID</label>
-        <input type="text" id="gameUID" value="1234567890">
-
-        <label>Experience (Years)</label>
-        <select id="experience">
-            <option value="0-1">0-1 Years</option>
-            <option value="1-2">1-2 Years</option>
-            <option value="2-3">2-3 Years</option>
-            <option value="3-4">3-4 Years</option>
-            <option value="4-5">4-5 Years</option>
-            <option value="5+">5+ Years</option>
-        </select>
-
-        <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+        <div class="profile-header">
+            <h1>User Profile</h1>
+        </div>
+        <div class="profile-details">
+            <div>
+                <span class="detail-label">Username:</span>
+                <span class="detail-value" id="username">Loading...</span>
+            </div>
+            <div>
+                <span class="detail-label">Full Name:</span>
+                <span class="detail-value" id="fullname">Loading...</span>
+            </div>
+            <div>
+                <span class="detail-label">Email:</span>
+                <span class="detail-value" id="email">Loading...</span>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Load saved profile data from localStorage
-        window.onload = function () {
-            const savedProfile = JSON.parse(localStorage.getItem("profileData"));
-            if (savedProfile) {
-                document.getElementById("username").value = savedProfile.username;
-                document.getElementById("email").value = savedProfile.email;
-                document.getElementById("games").value = savedProfile.games;
-                document.getElementById("dob").value = savedProfile.dob;
-                document.getElementById("gameUID").value = savedProfile.gameUID;
-                document.getElementById("experience").value = savedProfile.experience;
-                document.getElementById("profilePic").src = savedProfile.profileImage || "profile-placeholder.jpg";
+        // Fetch user profile data
+        async function fetchProfile() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/profile', {
+                    method: 'GET',
+                    credentials: 'include' // Ensures session/cookies are included
+                });
 
-                // Hide the file input & show "Change Image" button if an image is already uploaded
-                if (savedProfile.profileImage) {
-                    document.getElementById("profileImageUpload").style.display = "none";
-                    document.getElementById("changeImageBtn").style.display = "block";
+                if (response.status === 401) {
+                    window.location.href = 'login.html'; // Redirect if unauthorized
+                    return;
                 }
-            }
-        };
 
-        // Save profile data to localStorage
-        function saveProfile() {
-            const profileData = {
-                username: document.getElementById("username").value,
-                email: document.getElementById("email").value,
-                games: document.getElementById("games").value,
-                dob: document.getElementById("dob").value,
-                gameUID: document.getElementById("gameUID").value,
-                experience: document.getElementById("experience").value,
-                profileImage: document.getElementById("profilePic").src
-            };
-            localStorage.setItem("profileData", JSON.stringify(profileData));
-            alert("Profile updated successfully!");
-        }
+                const userData = await response.json();
 
-        // Profile image upload and preview
-        function uploadProfileImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById("profilePic").src = e.target.result;
-
-                    // Save profile image to localStorage and update in afterlogingpt page
-                    let profileData = JSON.parse(localStorage.getItem("profileData")) || {};
-                    profileData.profileImage = e.target.result;
-                    localStorage.setItem("profileData", JSON.stringify(profileData));
-
-                    // Update profile icon on after login page
-                    if (window.opener) {
-                        window.opener.postMessage({ profileImage: e.target.result }, "*");
-                    }
-
-                    // Hide file input & show "Change Image" button
-                    document.getElementById("profileImageUpload").style.display = "none";
-                    document.getElementById("changeImageBtn").style.display = "block";
-                };
-                reader.readAsDataURL(file);
+                document.getElementById('username').textContent = userData.username;
+                document.getElementById('fullname').textContent = userData.fullname;
+                document.getElementById('email').textContent = userData.email;
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                document.getElementById('username').textContent = "Error loading data";
             }
         }
 
-        // Trigger file input when "Change Image" button is clicked
-        function changeProfileImage() {
-            document.getElementById("profileImageUpload").click();
-        }
+        fetchProfile();
+
     </script>
-
-
 </body>
 
 </html>
