@@ -332,7 +332,7 @@
             from {
                 width: 0ch;
             }
-        }    
+        }
     </style>
 </head>
 
@@ -355,7 +355,9 @@
             <div class="dropdown-content" id="dropdown-content">
                 <a href="profile.html">My Profile</a>
                 <a href="#">Posts</a>
-                <a href="#">Logout</a>
+                <!-- Change the logout link to this -->
+                <!-- Change the logout link to this -->
+                <a href="#" onclick="confirmLogout(event)">Logout</a>
             </div>
         </div>
         <script>
@@ -404,17 +406,20 @@
         <h2>Top Players & Teams</h2>
         <div class="player-list">
             <div class="player-card">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZboiDZ3s79_0jCtG3IsDEwk8vg1XuoCSjmQ&s" alt="Player" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZboiDZ3s79_0jCtG3IsDEwk8vg1XuoCSjmQ&s"
+                    alt="Player" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
                 <h4>Scout OP</h4>
                 <p>BGMI | Team Phoenix</p>
             </div>
             <div class="player-card">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp71m7QRVZZDjiOb9b1g70qvLuKbXPClsCfA&s" alt="Player" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp71m7QRVZZDjiOb9b1g70qvLuKbXPClsCfA&s"
+                    alt="Player" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
                 <h4>Jonathan</h4>
                 <p>BGMI | Team GODL</p>
             </div>
             <div class="player-card">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgzrIHcWpyBpu2VGdVa4vomfiyg49VpG7nA&s" alt="Player" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgzrIHcWpyBpu2VGdVa4vomfiyg49VpG7nA&s"
+                    alt="Player" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
                 <h4>Chris \"EagleEye\" Brown</h4>
                 <p>CS:GO | Team Alpha</p>
             </div>
@@ -440,21 +445,46 @@
     </footer>
     <script>
         // Load profile image from localStorage when page loads
-        window.onload = function() {
+        window.onload = function () {
             const savedProfile = JSON.parse(localStorage.getItem("profileData"));
             if (savedProfile && savedProfile.profileImage) {
                 document.getElementById("userIcon").src = savedProfile.profileImage;
             }
         };
-    
+
         // Listen for profile image updates from the profile page
-        window.addEventListener("message", function(event) {
+        window.addEventListener("message", function (event) {
             if (event.data.profileImage) {
                 document.getElementById("userIcon").src = event.data.profileImage;
             }
         });
+        function confirmLogout(event) {
+            event.preventDefault();
+            const confirmLogout = confirm("Are you sure you want to log out?");
+            if (confirmLogout) {
+                logout();
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Logout failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Connection error. Please check your network.');
+            }
+        }
     </script>
-    
+
 </body>
 
 </html>

@@ -6,52 +6,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <style>
+        :root {
+            --primary-color: #e8760c;    /* Main brand color (blue) */
+            --secondary-color: #3AB795;  /* Accent color (teal) */
+            --text-dark: #2C3E50;        /* Primary text */
+            --text-medium: #7F8C8D;      /* Secondary text */
+            --background: #0c0908;       /* Page background */
+            --card-bg: rgba(255, 255, 255, 0.98); /* Card background */
+            --hover-effect: rgba(234, 245, 255, 0.5); /* Hover effect */
+        }
+    
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
         }
-
+    
         body {
-            background-color: #f0f2f5;
+            background: var(--background);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
-
+    
         .profile-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 500px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
         }
-
+    
+        .profile-container:hover {
+            transform: translateY(-3px);
+        }
+    
         .profile-header {
             text-align: center;
             margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
         }
-
-        .profile-details div {
-            margin: 1rem 0;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }
-
-        .detail-label {
+    
+        .profile-header h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
             font-weight: 600;
-            color: #666;
-            display: block;
-            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
         }
-
+    
+        .profile-details div {
+            margin: 1.2rem 0;
+            padding: 1.2rem 1.5rem;
+            
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+    
+        .profile-details div:hover {
+            background: var(--hover-effect);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+    
+        .detail-label {
+            font-weight: 500;
+            color: var(--text-medium);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+    
         .detail-value {
             font-size: 1.1rem;
-            color: #333;
+            color: var(--text-dark);
+            font-weight: 500;
+            display: block;
+            word-break: break-word;
+        }
+    
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 1.5rem;
+                margin: 15px;
+            }
+            
+            .profile-header h1 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>

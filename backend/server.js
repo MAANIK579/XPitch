@@ -119,5 +119,16 @@ app.get('/profile', requireAuth, async (req, res) => {
     }
 });
 
+// Add this route before the server starts listening
+app.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ message: 'Logout failed' });
+        }
+        res.clearCookie('connect.sid'); // Clear session cookie
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
+});
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
