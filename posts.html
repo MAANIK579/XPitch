@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Posts</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .nav { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .posts-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .post { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+        .post img { width: 100%; height: 300px; object-fit: cover; }
+        .logout-btn { background: #ff4444; color: white; border: none; padding: 8px 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <h1>Public Feed</h1>
+        <div>
+            <a href="/myposts.html">My Posts</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+    
+    <div class="posts-container" id="postsContainer">
+        <!-- Posts will be loaded here -->
+    </div>
+
+    <script>
+        // Load public posts
+        async function loadPosts() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/posts', {
+                    credentials: 'include'
+                });
+                const posts = await response.json();
+                
+                const container = document.getElementById('postsContainer');
+                container.innerHTML = posts.map(post => `
+                    <div class="post">
+                        <img src="${post.imageUrl}" alt="Post image">
+                        <p>${post.caption}</p>
+                        <small>Posted by ${post.user.fullname} • 
+                            ${new Date(post.createdAt).toLocaleDateString()}
+                        </small>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                alert('Failed to load posts');
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch('http://127.0.0.1:5000/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.href = '/login.html'; // Redirect to your login page
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        }
+
+        // Check authentication status on page load
+        fetch('http://127.0.0.1:5000/profile', {
+            credentials: 'include'
+        }).then(res => {
+            if (!res.ok) window.location.href = '/login.html';
+            else loadPosts();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Posts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .posts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .post {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .post img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        #postForm {
+            margin-bottom: 20px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav">
+        <h1>My Posts</h1>
+        <div>
+            <a href="/post.html">Public Feed</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <form id="postForm" onsubmit="createPost(event)" enctype="multipart/form-data">
+        <input type="file" id="imageInput" accept="image/*" required>
+        <textarea id="caption" placeholder="Write a caption..." required></textarea>
+        <div id="imagePreview"></div>
+        <button type="submit">Share Post</button>
+    </form>
+
+    <div class="posts-container" id="postsContainer">
+        <!-- User's posts will be loaded here -->
+    </div>
+
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function (e) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+
+            if (this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview-image';
+                    preview.appendChild(img);
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        async function createPost(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const imageFile = document.getElementById('imageInput').files[0];
+            const caption = document.getElementById('caption').value;
+
+            formData.append('image', imageFile);
+            formData.append('caption', caption);
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/posts', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    loadMyPosts();
+                    document.getElementById('postForm').reset();
+                    document.getElementById('imagePreview').innerHTML = '';
+                }
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to create post');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error creating post:', error);
+                alert('Failed to create post');
+            }
+        }
+
+        // Shared logout function
+        async function logout() {
+            try {
+                await fetch('http://127.0.0.1:5000/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.href = '/login.html';
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        }
+
+        // Check authentication status on page load
+        fetch('http://127.0.0.1:5000/profile', {
+            credentials: 'include'
+        }).then(res => {
+            if (!res.ok) window.location.href = '/login.html';
+            else loadMyPosts();
+        });
+    </script>
+</body>
+
+</html>
