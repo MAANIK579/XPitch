@@ -7,11 +7,14 @@ const app = express();
 const MongoStore = require('connect-mongo');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs').promises;
 
 // Middleware
 app.use(cookie());
 app.use(cors({
-    origin: 'http://127.0.0.1:5500', // Change to your actual frontend port
+    origin: 'http://127.0.0.1:5500',
+    methods: ['GET', 'POST', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 app.use(session({
@@ -194,6 +197,53 @@ app.post('/post', requireAuth, upload.single('file'), async (req, res) => {
     }
 });
 
+// Delete all posts for current user
+
+app.delete('/posts/delete-all', requireAuth, async (req, res) => {
+    try {
+        // 1. Verify user session
+        if (!req.session.userEmail) {
+            return res.status(401).json({ message: 'Not authenticated' });
+        }
+
+        // 2. Find user
+        const user = await User.findOne({ email: req.session.userEmail });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // 3. Get all user posts
+        const posts = await Post.find({ user: user._id });
+
+        // 4. Delete associated files
+        await Promise.all(posts.map(async (post) => {
+            try {
+                const filePath = path.join(__dirname, post.imageUrl);
+                await fs.unlink(filePath);
+            } catch (fileError) {
+                console.error('⚠️ Error deleting file:', post.imageUrl, fileError.message);
+            }
+        }));
+
+        // 5. Delete from database
+        await Post.deleteMany({ user: user._id });
+
+        // 6. Send response
+        res.json({
+            success: true,
+            message: `Deleted ${posts.length} posts successfully`
+        });
+
+    } catch (error) {
+        console.error('🚨 Server Error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error',
+            error: error.message // Send actual error message
+        });
+    }
+});
+
 // Delete Post route
 app.delete('/posts/:id', requireAuth, async (req, res) => {
     try {
@@ -284,5 +334,29 @@ app.get('/posts/:id/comments', async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
+// Add profile route
+// View other users' profiles
+app.get('/view-profile/:username', async (req, res) => {
+    try {
+        const user = await User.findOne({ username: req.params.username })
+            .select('-password')
+            .lean();
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const posts = await Post.find({ user: user._id })
+            .sort({ createdAt: -1 })
+            .lean();
+
+        res.json({ user, posts });
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
+
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

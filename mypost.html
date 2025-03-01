@@ -163,13 +163,45 @@
         .post-card p {
             margin: 10px 0;
             color: #333;
-        }   
+        }
 
         .no-posts {
             text-align: center;
             color: #666;
             padding: 50px;
             width: 100%;
+        }
+
+        .posts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0 20px 0;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .delete-all-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .delete-all-btn:hover {
+            opacity: 0.8;
+        }
+
+        .delete-icon {
+            width: 18px;
+            height: 18px;
         }
     </style>
 </head>
@@ -201,7 +233,15 @@
             <button type="submit" id="submitBtn">Upload Now</button>
         </form>
     </div>
-    <h2 style="margin-top: 40px; text-align: center;">My Uploaded Posts</h2>
+    <div class="posts-header">
+        <h2>My Uploaded Posts</h2>
+        <button class="delete-all-btn" onclick="deleteAllPosts()">
+            <svg class="delete-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+            </svg>
+            Delete All
+        </button>
+    </div>
     <div class="posts-container" id="postsContainer"></div>
 
     <script>
@@ -355,6 +395,37 @@
             } catch (error) {
                 console.error('Delete error:', error);
                 alert(`Delete failed: ${error.message}`);
+            }
+        }
+
+        async function deleteAllPosts() {
+            if (!confirm('This will permanently delete ALL your posts! Continue?')) return;
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/posts/delete-all', {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || result.error || 'Delete failed');
+                }
+
+                // Clear posts and show message
+                document.getElementById('postsContainer').innerHTML = `
+            <div class="no-posts">
+                <p>All posts deleted successfully</p>
+                <p>Deleted ${result.message.match(/\d+/)?.[0] || ''} posts</p>
+            </div>
+        `;
+
+                showToast(result.message);
+
+            } catch (error) {
+                console.error('Delete Error:', error);
+                showToast(`Error: ${error.message}`, true);
             }
         }
 
