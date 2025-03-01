@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Stats Gallery</title>
+    <style>
+        /* Your existing CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            text-align: center;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .image-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>All Uploaded Gaming Stats</h2>
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        async function loadImages() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/posts');
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load posts: ${response.status}`);
+                }
+
+                const posts = await response.json();
+
+                const gallery = document.getElementById('gallery');
+                gallery.innerHTML = posts.length === 0 
+                    ? "<p>No posts available.</p>" 
+                    : posts.map(post => `
+                        <div class="image-card">
+                            <img src="http://127.0.0.1:5000${post.imageUrl}" alt="Gaming stat">
+                            <p>${post.caption}</p>
+                            <p>Posted by: ${post.user ? post.user.username : 'Unknown'}</p>
+                        </div>
+                    `).join('');
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('gallery').innerHTML = 
+                    `<p>Error loading posts: ${error.message}</p>`;
+            }
+        }
+
+        // Initial load
+        loadImages();
+    </script>
+</body>
+</html>

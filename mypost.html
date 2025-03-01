@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Gaming Stats</title>
+    <style>
+        :root {
+            --primary: #5865f2;
+            --background: #f8f9fa;
+            --text: #2e3338;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .upload-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .custom-file-upload {
+            display: block;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .custom-file-upload:hover {
+            border-color: var(--primary);
+        }
+
+        #previewContainer {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.3s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background-color: #eee;
+            border-radius: 2px;
+            margin-top: 1rem;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="upload-container">
+        <h1>Upload Your Gaming Stats</h1>
+        <form id="uploadForm">
+            <div class="form-group">
+                <label class="custom-file-upload">
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <span>📁 Click to upload image</span>
+                    <div id="previewContainer">
+                        <img id="imagePreview" alt="Preview">
+                    </div>
+                </label>
+                <div class="error-message" id="fileError"></div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="captionInput" placeholder="Enter your caption...">
+                <div class="error-message" id="captionError"></div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <button type="submit" id="submitBtn">Upload Now 🚀</button>
+        </form>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const progressBar = document.querySelector('.progress-bar');
+        const progressFill = document.getElementById('progressFill');
+
+        // File input handler
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContainer.style.display = 'block';
+                    imagePreview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Form submission
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = fileInput.files[0];
+            const caption = document.getElementById('captionInput').value.trim();
+            let isValid = true;
+
+            // Validation
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+            
+            if (!file) {
+                document.getElementById('fileError').textContent = 'Please select an image';
+                document.getElementById('fileError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (caption.length < 3) {
+                document.getElementById('captionError').textContent = 'Caption must be at least 3 characters';
+                document.getElementById('captionError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('caption', caption);
+
+            try {
+                progressBar.style.display = 'block';
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+
+                const response = await fetch('http://127.0.0.1:5000/post', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Upload failed');
+                }
+
+                // Reset form
+                fileInput.value = '';
+                captionInput.value = '';
+                previewContainer.style.display = 'none';
+                progressBar.style.display = 'none';
+                submitBtn.disabled = false;
+                progressFill.style.width = '0%';
+
+                showToast('🎉 Upload successful!');
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast(`❌ Error: ${error.message}`, true);
+                progressBar.style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+            }
+        });
+
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.padding = '1rem 2rem';
+            toast.style.background = isError ? '#dc3545' : '#28a745';
+            toast.style.color = 'white';
+            toast.style.borderRadius = '8px';
+            toast.style.zIndex = '1000';
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -172,7 +172,7 @@ const Post = mongoose.model('Post', postSchema);
 
 // Add these routes before server starts listening
 // Create Post
-app.post('/posts', requireAuth, upload.single('image'), async (req, res) => {
+app.post('/post', requireAuth, upload.single('file'), async (req, res) => {
     try {
         const { caption } = req.body;
         const user = await User.findOne({ email: req.session.userEmail });
@@ -196,6 +196,7 @@ app.post('/posts', requireAuth, upload.single('image'), async (req, res) => {
 
 // Get All Posts (public)
 app.get('/posts', async (req, res) => {
+
     try {
         const posts = await Post.find()
             .populate('user', 'username fullname')
@@ -206,8 +207,8 @@ app.get('/posts', async (req, res) => {
     }
 });
 
-// Get User's Posts
 app.get('/myposts', requireAuth, async (req, res) => {
+
     try {
         const user = await User.findOne({ email: req.session.userEmail });
         const posts = await Post.find({ user: user._id })
