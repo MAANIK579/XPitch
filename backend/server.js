@@ -44,7 +44,10 @@ const userSchema = new mongoose.Schema({
     username: String,
     fullname: String,
     email: { type: String, unique: true },
-    password: String
+    password: String,
+    dob: Date,
+    player_id: { type: String, unique: true },
+    experience: Number
 });
 const User = mongoose.model('User', userSchema);
 
@@ -89,17 +92,40 @@ app.use('/uploads', express.static('uploads'));
 // Routes
 app.post('/signup', express.json(), async (req, res) => {
     try {
-        const { username, fullname, email, password } = req.body;
-        const existingUser = await User.findOne({ email });
+        const {
+            username,
+            fullname,
+            email,
+            password,
+            dob,
+            player_id,
+            experience
+        } = req.body;
+
+        // Check for existing email or player ID
+        const existingUser = await User.findOne({ $or: [{ email }, { player_id }] });
 
         if (existingUser) {
-            return res.status(400).json({ message: "Email already exists" });
+            if (existingUser.email === email) {
+                return res.status(400).json({ message: "Email already exists" });
+            }
+            if (existingUser.player_id === player_id) {
+                return res.status(400).json({ message: "Player ID already exists" });
+            }
         }
 
-        const newUser = new User({ username, fullname, email, password });
+        const newUser = new User({
+            username,
+            fullname,
+            email,
+            password,
+            dob: new Date(dob),
+            player_id,
+            experience: Number(experience)
+        });
+
         await newUser.save();
 
-        // Automatically log in after signup
         req.session.userEmail = newUser.email;
         res.status(201).json({ message: "User created successfully" });
 
@@ -145,7 +171,10 @@ app.get('/profile', requireAuth, async (req, res) => {
         res.json({
             username: user.username,
             fullname: user.fullname,
-            email: user.email
+            email: user.email,
+            dob: user.dob,
+            player_id: user.player_id,
+            experience: user.experience
         });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });

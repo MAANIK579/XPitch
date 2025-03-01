@@ -52,7 +52,7 @@
         }
 
         button {
-            background: rgba(255, 105, 180, 0.9); /* Changed to pink */
+            background: rgba(255, 105, 180, 0.9);
             padding: 0.8rem;
             color: white;
             border: none;
@@ -101,6 +101,10 @@
             <input type="email" id="email" placeholder="Email" required>
             <input type="password" id="password" placeholder="Password" required>
             <input type="password" id="confirm_password" placeholder="Confirm Password" required>
+            <input type="date" id="dob" required>
+            <input type="text" id="player_id" placeholder="Player ID" required>
+            <input type="number" id="experience" placeholder="Experience (years)" min="0" required>
+
             <button type="submit">Create Account</button>
             <div class="toggle-form">
                 Already have an account? <a href="login.html">Login</a>
@@ -118,6 +122,9 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
+            const dob = document.getElementById('dob').value;
+            const player_id = document.getElementById('player_id').value;
+            const experience = document.getElementById('experience').value;
 
             if (password !== confirmPassword) {
                 document.getElementById('message').textContent = 'Passwords do not match';
@@ -130,7 +137,15 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ username, fullname, email, password }),
+                    body: JSON.stringify({
+                        username,
+                        fullname,
+                        email,
+                        password,
+                        dob,
+                        player_id,
+                        experience
+                    }),
                     credentials: 'include'
                 });
 
@@ -138,7 +153,7 @@
                 document.getElementById('message').textContent = result.message;
 
                 if (response.status === 201) {
-                    window.location.href = '/afterlogingpt.html'; // Changed redirect
+                    window.location.href = '/afterlogingpt.html';
                 }
             } catch (error) {
                 console.error('Error:', error);
