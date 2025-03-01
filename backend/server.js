@@ -250,5 +250,39 @@ app.get('/myposts', requireAuth, async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
+// Get single post
+app.get('/posts/:id', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id).populate('user');
+        res.json(post);
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Like post
+app.post('/posts/:id/like', requireAuth, async (req, res) => {
+    try {
+        const post = await Post.findByIdAndUpdate(
+            req.params.id,
+            { $inc: { likes: 1 } },
+            { new: true }
+        );
+        res.json(post);
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Get comments
+app.get('/posts/:id/comments', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id).select('comments');
+        res.json(post.comments || []);
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
