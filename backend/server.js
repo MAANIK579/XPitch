@@ -13,7 +13,7 @@ const fs = require('fs').promises;
 app.use(cookie());
 app.use(cors({
     origin: 'http://127.0.0.1:5500',
-    methods: ['GET', 'POST', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
@@ -383,9 +383,6 @@ app.get('/view-profile/:username', async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
-
-
-
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
