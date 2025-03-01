@@ -84,7 +84,7 @@ const upload = multer({
 app.use('/uploads', express.static('uploads'));
 
 // Routes
-app.post('/signup',express.json(), async (req, res) => {
+app.post('/signup', express.json(), async (req, res) => {
     try {
         const { username, fullname, email, password } = req.body;
         const existingUser = await User.findOne({ email });
@@ -106,7 +106,7 @@ app.post('/signup',express.json(), async (req, res) => {
 });
 
 // Update login route with better error handling
-app.post('/login',express.json(), async (req, res) => {
+app.post('/login', express.json(), async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
@@ -191,6 +191,37 @@ app.post('/post', requireAuth, upload.single('file'), async (req, res) => {
         res.status(201).json({ message: "Post created successfully", post: newPost });
     } catch (error) {
         res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Delete Post route
+app.delete('/posts/:id', requireAuth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id)
+            .populate('user');
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Verify ownership
+        const currentUser = await User.findOne({ email: req.session.userEmail });
+        if (post.user._id.toString() !== currentUser._id.toString()) {
+            return res.status(403).json({ message: 'Unauthorized to delete this post' });
+        }
+
+        // Delete image file
+        const fs = require('fs').promises;
+        const imagePath = path.join(__dirname, post.imageUrl);
+        await fs.unlink(imagePath);
+
+        // Delete from database
+        await Post.deleteOne({ _id: req.params.id });
+
+        res.json({ message: 'Post deleted successfully' });
+    } catch (error) {
+        console.error('Delete error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
