@@ -8,7 +8,7 @@
     <style>
         :root {
             --primary: #5865f2;
-            --background: #f8f9fa;
+            --background: #000000;
             --text: #2e3338;
         }
 
@@ -178,7 +178,10 @@
             align-items: center;
             margin: 40px 0 20px 0;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1100px;
+        }
+        .posts-header>h2{
+            width: 30%;
         }
 
         .delete-all-btn {
@@ -234,7 +237,7 @@
         </form>
     </div>
     <div class="posts-header">
-        <h2>My Uploaded Posts</h2>
+        <h2 style="color: aliceblue;">My Uploaded Posts</h2>
         <button class="delete-all-btn" onclick="deleteAllPosts()">
             <svg class="delete-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
