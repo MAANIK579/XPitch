@@ -131,7 +131,7 @@
         // Existing loadImages function modified
         async function loadImages() {
             try {
-                const response = await fetch('http://127.0.0.1:5000/posts');
+                const response = await fetch('https://xpitch.netlify.app/posts');
 
                 if (!response.ok) {
                     throw new Error(`Failed to load posts: ${response.status}`);
@@ -144,7 +144,7 @@
                     ? "<p>No posts available.</p>"
                     : posts.map(post => `
                         <div class="image-card" onclick="openPost(${JSON.stringify(post).replace(/"/g, '&quot;')})">
-                            <img src="http://127.0.0.1:5000${post.imageUrl}" alt="Gaming stat">
+                            <img src="https://xpitch.netlify.app/${post.imageUrl}" alt="Gaming stat">
                             <p>${post.caption}</p>
                             <p>Posted by: ${post.user ? post.user.username : 'Unknown'}</p>
                         </div>
@@ -165,7 +165,7 @@
             const modal = document.getElementById('postModal');
 
             // Set modal content
-            document.getElementById('modalImage').src = `http://127.0.0.1:5000${postData.imageUrl}`;
+            document.getElementById('modalImage').src = `https://xpitch.netlify.app/${postData.imageUrl}`;
             document.getElementById('modalCaption').textContent = postData.caption;
             document.getElementById('modalUsername').textContent = postData.user?.username || 'Unknown';
 
@@ -182,7 +182,7 @@
 
         async function fetchComments(postId) {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/posts/${postId}/comments`);
+                const response = await fetch(`https://xpitch.netlify.app/posts/${postId}/comments`);
                 return await response.json();
             } catch (error) {
                 console.error('Error fetching comments:', error);
@@ -201,7 +201,7 @@
 
         async function handleLike() {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/posts/${currentPost._id}/like`, {
+                const response = await fetch(`https://xpitch.netlify.app/posts/${currentPost._id}/like`, {
                     method: 'POST',
                     credentials: 'include'
                 });

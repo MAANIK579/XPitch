@@ -136,7 +136,7 @@
             const username = urlParams.get('username');
 
             try {
-                const response = await fetch(`http://127.0.0.1:5000/view-profile/${username}`);
+                const response = await fetch(`https://xpitch.netlify.app/view-profile/${username}`);
                 if (!response.ok) throw new Error('Profile not found');
 
                 const { user, posts } = await response.json();
@@ -150,7 +150,7 @@
 
                 document.getElementById('postsContainer').innerHTML = posts.map(post => `
                     <div class="post-card">
-                        <img src="http://127.0.0.1:5000${post.imageUrl}" alt="Post">
+                        <img src="https://xpitch.netlify.app/${post.imageUrl}" alt="Post">
                         <p>${post.caption}</p>
                     </div>
                 `).join('');
